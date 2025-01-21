@@ -1,6 +1,7 @@
 package com.fatiharge.mapper;
 
 import com.fatiharge.client.rest.newsApiClient.dto.Article;
+import com.fatiharge.dto.getNewsResponse.GetNewsData;
 import com.fatiharge.entity.News;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -17,5 +18,17 @@ public interface NewsMapper {
     @Mapping(target = "sourceId", source = "article.source.id")
     @Mapping(target = "name", source = "article.source.name")
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdDate", ignore = true)
     News newsFromApiResponse(Article article);
+
+    @Mapping(target = "author", source = "news.author")
+    @Mapping(target = "title", source = "news.title")
+    @Mapping(target = "description", source = "news.description")
+    @Mapping(target = "url", source = "news.url")
+    @Mapping(target = "urlToImage", source = "news.urlToImage")
+    @Mapping(target = "publishedAt", source = "news.publishedAt")
+    @Mapping(target = "content", source = "news.content")
+    @Mapping(target = "sourceId", source = "news.sourceId")
+    @Mapping(target = "name", source = "news.name")
+    GetNewsData getGetNewsDataFromNews(News news);
 }

@@ -4,12 +4,13 @@ import com.fatiharge.service.NewsService;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.jboss.logging.Logger;
 
 import java.time.LocalDateTime;
 
 @ApplicationScoped
 public class NewsScheduler {
-
+    private static final Logger LOG = Logger.getLogger(NewsScheduler.class);
     @Inject
     NewsService newsService;
 
@@ -17,9 +18,9 @@ public class NewsScheduler {
     void fetchNews() {
         try {
             newsService.fetchDailyNews("us");
-            System.out.println("News fetched successfully at " + LocalDateTime.now());
+            LOG.info("News fetched successfully at " + LocalDateTime.now());
         } catch (Exception e) {
-            System.err.println("Failed to fetch news: " + e.getMessage());
+            LOG.error("Failed to fetch news: " + e.getMessage(), e);
         }
     }
 }

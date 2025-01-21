@@ -1,13 +1,18 @@
 package com.fatiharge.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.util.Date;
 
 @Entity
 @Table(name = "new")
 public class News extends PanacheEntity {
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_date", updatable = false)
+    @CreationTimestamp
+    public Date createdDate;
     public String author;
     public String title;
     @Column(length = 2048)

@@ -2,6 +2,8 @@ package com.fatiharge.service;
 
 import com.fatiharge.client.rest.newsApiClient.NewsApiClient;
 import com.fatiharge.client.rest.newsApiClient.dto.response.ArticleResponse;
+import com.fatiharge.dto.getNewsResponse.GetNewsData;
+import com.fatiharge.dto.getNewsResponse.GetNewsResponse;
 import com.fatiharge.entity.News;
 import com.fatiharge.mapper.NewsMapper;
 import com.fatiharge.repository.NewsRepository;
@@ -29,12 +31,19 @@ public class NewsService {
         List<News> newsList = response.articles.stream()
                 .map(article -> newsMapper.newsFromApiResponse(article))
                 .toList();
-
         newsRepository.persist(newsList);
     }
 
+    public GetNewsResponse getNews(
+            int page,
+            int size
+    ) {
+        List<News> pagedNews = newsRepository.findPagedAndSortedNews(page, size);
+
+        List<GetNewsData> newsDTOList = pagedNews.stream()
+                .map(news -> newsMapper.getGetNewsDataFromNews(news))
+                .toList();
+
+        return new GetNewsResponse(newsDTOList);
+    }
 }
-
-
-
-
