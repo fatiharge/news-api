@@ -1,0 +1,38 @@
+services:
+  news-api-db:
+    container_name: news-api-db
+    image: postgres:16.3
+    volumes:
+      - /var/lib/news-api-db:/var/lib/postgresql/data
+    labels:
+      - "traefik.tcp.routers.news-api-db.rule=HostSNI(`news-api-db.fatiharge.com`)"
+      - "traefik.tcp.routers.news-api-db.entrypoints=tcp"
+      - "traefik.tcp.routers.news-api-db.tls.certresolver=myresolver"
+      - "traefik.tcp.services.news-api-db.loadbalancer.server.port=5432"
+    env_file:
+      - ../../../.env
+    networks:
+      - reverse-proxy
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+  news-api:
+    image: quarkus/news-api-jvm
+    container_name: news-api
+    depends_on:
+      news-api-db:
+        condition: service_healthy
+    env_file:
+      - ../../../.env
+    labels:
+      - "traefik.http.routers.news-api.rule=Host(`news-api.fatiharge.com`)"
+      - "traefik.http.routers.news-api.entrypoints=websecure"
+      - "traefik.http.routers.news-api.tls.certresolver=myresolver"
+      - "traefik.http.services.news-api.loadbalancer.server.port=8080"
+    networks:
+      - reverse-proxy
+networks:
+  reverse-proxy:
+    external: true
